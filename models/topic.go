@@ -1,9 +1,10 @@
 package models
 
 import (
+	"context"
 	"time"
 
-	"github.com/go-pg/pg"
+	"webrtc-china.org/session"
 )
 
 type Topic struct {
@@ -16,14 +17,14 @@ type Topic struct {
 	UpdatedAt time.Time
 }
 
-func CreateTopic(db *pg.DB, userId string, title string, content string, node string) (*Topic, error) {
+func CreateTopic(ctx context.Context, userId string, title string, content string, node string) (*Topic, error) {
 	topic := &Topic{
 		Title:   title,
 		Content: content,
 		UserId:  userId,
 		Node:    node,
 	}
-	err := db.Insert(topic)
+	err := session.Database(ctx).Insert(topic)
 	if err != nil {
 		return nil, err
 	}

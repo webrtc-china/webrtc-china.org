@@ -3,8 +3,6 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/go-pg/pg"
-
 	"github.com/gin-gonic/gin"
 	"webrtc-china.org/middlewares"
 	"webrtc-china.org/models"
@@ -29,10 +27,9 @@ func RegisterTopics(router *gin.Engine) {
 
 func (impl *topicsIml) create(c *gin.Context) {
 	var bodyRequest topicRequest
-	db := c.MustGet(middlewares.KeyDatabase).(*pg.DB)
 	if err := c.BindJSON(&bodyRequest); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	} else if tp, e := models.CreateTopic(db, "xxx", bodyRequest.Title, bodyRequest.Content, bodyRequest.Node); e != nil {
+	} else if tp, e := models.CreateTopic(middlewares.Context(c), "xxx", bodyRequest.Title, bodyRequest.Content, bodyRequest.Node); e != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": e.Error()})
 	} else {
 		c.JSON(http.StatusOK, views.BuildTopicView(tp, nil))
