@@ -27,12 +27,13 @@ func RegisterTopics(router *gin.Engine) {
 
 func (impl *topicsIml) create(c *gin.Context) {
 	var bodyRequest topicRequest
+	user := middlewares.User(c)
 	if err := c.BindJSON(&bodyRequest); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	} else if tp, e := models.CreateTopic(middlewares.Context(c), "xxx", bodyRequest.Title, bodyRequest.Content, bodyRequest.Node); e != nil {
+	} else if tp, e := models.CreateTopic(middlewares.Context(c), user, bodyRequest.Title, bodyRequest.Content, bodyRequest.Node); e != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": e.Error()})
 	} else {
-		c.JSON(http.StatusOK, views.BuildTopicView(tp, nil))
+		c.JSON(http.StatusOK, views.BuildTopicView(tp, user))
 	}
 }
 

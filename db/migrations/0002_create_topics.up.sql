@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS topics (
-        topic_id                                SERIAL PRIMARY KEY NOT NULL,
+        id                                      SERIAL PRIMARY KEY NOT NULL,
         user_id                                 VARCHAR NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         title                                   VARCHAR NOT NULL,
         content                                 VARCHAR NOT NULL, 

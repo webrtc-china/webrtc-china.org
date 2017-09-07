@@ -17,6 +17,9 @@ var keyCurrentUser = contextValueKey{1000}
 func SetupCookie(w http.ResponseWriter, r *http.Request, user *models.User) {
 	cookie := user.Authentication(r.Context())
 	cookie.Domain = FetchCookieDomain(r)
+	log.Println("====cookie======")
+	log.Println(cookie)
+	log.Println("==========")
 	http.SetCookie(w, cookie)
 }
 
@@ -38,7 +41,7 @@ func Authentication() gin.HandlerFunc {
 		}
 		user, err := models.AuthenticateUserWithToken(Context(c), cook.Value)
 		if err != nil {
-			// TODO
+			log.Println(err)
 		} else if user != nil {
 			SetupCookie(c.Writer, c.Request, user)
 			WithUser(c, user)

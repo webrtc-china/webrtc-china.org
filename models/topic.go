@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"log"
 	"time"
 
 	"webrtc-china.org/session"
@@ -17,15 +18,18 @@ type Topic struct {
 	UpdatedAt time.Time
 }
 
-func CreateTopic(ctx context.Context, userId string, title string, content string, node string) (*Topic, error) {
+func CreateTopic(ctx context.Context, user *User, title string, content string, node string) (*Topic, error) {
 	topic := &Topic{
-		Title:   title,
-		Content: content,
-		UserId:  userId,
-		Node:    node,
+		Title:     title,
+		Content:   content,
+		UserId:    user.Id,
+		Node:      node,
+		CreatedAt: time.Now().UTC(),
+		UpdatedAt: time.Now().UTC(),
 	}
 	err := session.Database(ctx).Insert(topic)
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 	return topic, nil

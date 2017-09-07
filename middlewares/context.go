@@ -33,5 +33,6 @@ func Context(c *gin.Context) context.Context {
 }
 
 func User(c *gin.Context) *models.User {
-	return c.MustGet(keyUser).(*models.User)
+	ctx := Context(c)
+	return ctx.Value(keyUser).(*models.User)
 }
