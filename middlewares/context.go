@@ -13,7 +13,7 @@ import (
 const keyContext = "context"
 const keyUser = "user"
 
-func WithContext(db *pg.DB) gin.HandlerFunc {
+func WithDatabase(db *pg.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
 		ctx = session.WithDatabase(ctx, db)
@@ -23,7 +23,9 @@ func WithContext(db *pg.DB) gin.HandlerFunc {
 }
 
 func WithUser(c *gin.Context, user *models.User) {
-	c.Set(keyUser, user)
+	ctx := Context(c)
+	ctx = context.WithValue(ctx, keyUser, user)
+	c.Set(keyContext, ctx)
 }
 
 func Context(c *gin.Context) context.Context {

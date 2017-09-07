@@ -11,6 +11,7 @@ type contextValueKey int
 const (
 	keyRequest  contextValueKey = 0
 	keyDatabase contextValueKey = 1
+	keyUser     contextValueKey = 2
 )
 
 func WithDatabase(ctx context.Context, database *pg.DB) context.Context {

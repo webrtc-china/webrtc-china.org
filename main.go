@@ -14,7 +14,8 @@ import (
 func main() {
 	db := models.InitDb()
 	router := gin.Default()
-	router.Use(middlewares.WithContext(db))
+	router.Use(middlewares.WithDatabase(db))
+	router.Use(middlewares.Authentication())
 	router.GET("/", index)
 	controllers.RegisterUsers(router)
 	controllers.RegisterTopics(router)

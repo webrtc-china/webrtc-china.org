@@ -96,3 +96,29 @@ func (user *User) Authentication(ctx context.Context) *http.Cookie {
 	cookie := http.Cookie{Name: "Authorization", Value: tokenString, Path: "/", MaxAge: int((time.Minute * 30).Seconds()), Secure: config.Environment == "production"}
 	return &cookie
 }
+
+func AuthenticateUserWithToken(ctx context.Context, tokenString string) (*User, error) {
+	var user *User = nil
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			description := fmt.Errorf("Unauthorized, maybe email or password error")
+			return nil, description
+		}
+		if claims, ok := token.Claims.(jwt.MapClaims); !ok {
+			return nil, fmt.Errorf("Unauthorized, token")
+		} else {
+			userId := claims["jti"]
+
+			_, err := session.Database(ctx).QueryOne(user, `SELECT * FROM users WHERE id = ?`, userId)
+			if err != nil || user == nil {
+				return nil, fmt.Errorf("Unauthorized, transaction error")
+			}
+			key := sha256.Sum256([]byte(user.EncryptedPassword))
+			return key[:], nil
+		}
+	})
+	if err != nil || !token.Valid {
+		return nil, fmt.Errorf("Unauthorized, valid failed")
+	}
+	return user, nil
+}
