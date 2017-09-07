@@ -19,6 +19,7 @@ func main() {
 	router.GET("/", index)
 	controllers.RegisterUsers(router)
 	controllers.RegisterTopics(router)
+	controllers.RegisterReplies(router)
 	server := &http.Server{
 		Addr:    ":8080",
 		Handler: router,
